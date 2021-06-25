@@ -44,7 +44,7 @@ public class RoleController {
         return roleService.get(id);
     }
 
-    @PutMapping("/roles/{id}")
+    @PutMapping("/roles")
     @ApiOperation(value = "更新数据")
     public Object update(Role bean, HttpServletRequest request) {
         String name = request.getParameter("name");

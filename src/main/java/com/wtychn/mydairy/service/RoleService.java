@@ -41,6 +41,6 @@ public class RoleService {
     }
 
     public Role get(int id) {
-        return roleDAO.getById(id);
+        return roleDAO.getOne(id);
     }
 }

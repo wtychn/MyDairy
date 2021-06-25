@@ -30,27 +30,6 @@ public class Dairy {
     @JoinColumn(name = "uid")
     private User user;
 
-    private int tid;
-
-    private String timePeriod;
-
     private String content;
 
-    public String getTimePeriod() {
-        String period = "";
-        switch (tid) {
-            case 0:
-                period = "早晨";
-                break;
-            case 1:
-                period = "下午";
-                break;
-            case 2:
-                period = "晚上";
-                break;
-            default:
-                period = "未定义状态码：" + tid;
-        }
-        return period;
-    }
 }

@@ -2,19 +2,14 @@ package com.wtychn.mydairy.service;
 
 import com.wtychn.mydairy.dao.DairyDAO;
 import com.wtychn.mydairy.pojo.Dairy;
-import com.wtychn.mydairy.pojo.Role;
 import com.wtychn.mydairy.pojo.User;
 import com.wtychn.mydairy.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.spi.http.HttpContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,14 +46,14 @@ public class DairyService {
     }
 
     public Dairy get(int id) {
-        return dairyDAO.getById(id);
+        return dairyDAO.getOne(id);
     }
 
-    public void delete(Dairy bean) {
-        dairyDAO.delete(bean);
+    public void delete(int id) {
+        dairyDAO.deleteById(id);
     }
 
-    public void set(Dairy bean) {
+    public void update(Dairy bean) {
         dairyDAO.save(bean);
     }
 

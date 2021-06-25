@@ -44,13 +44,10 @@ public class CategoryController {
         return categoryService.get(id);
     }
 
-    @PutMapping("/categories/{id}")
+    @PutMapping("/categories")
     @ApiOperation(value = "更新数据")
-    public Object update(Category bean, HttpServletRequest request) {
-        String name = request.getParameter("name");
-        bean.setName(name);
+    public Object update(Category bean) {
         categoryService.update(bean);
-
         return bean;
     }
 }

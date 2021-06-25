@@ -8,10 +8,10 @@ spring:
 
   datasource:
     druid:
-      url: jdbc:mysql://127.0.0.1:3306/my_dairy?characterEncoding=UTF-8
+      url: jdbc:mysql://127.0.0.1:3306/my_dairy?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
       username: root
       password: 123456
-      driver-class-name: com.mysql.jdbc.Driver
+      driver-class-name: com.mysql.cj.jdbc.Driver
       # 开启sql语句自动加载，只认识名为： schema-all.sql和schema.sql和data-all.sql和data.sql的sql语句
       # initialization-mode: always
 
