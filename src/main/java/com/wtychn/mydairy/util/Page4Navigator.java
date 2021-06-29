@@ -1,14 +1,17 @@
 package com.wtychn.mydairy.util;
- 
+
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
- @Data
- @NoArgsConstructor //这个空的分页是为了 Redis 从 json格式转换为 Page4Navigator 对象而专门提供的
-public class Page4Navigator<T> {
+import javax.persistence.Transient;
+
+@Data
+@NoArgsConstructor //这个空的分页是为了 Redis 从 json格式转换为 Page4Navigator 对象而专门提供的
+public class Page4Navigator<T> implements Serializable {
     Page<T> pageFromJPA;
     int navigatePages;
     int totalPages;
@@ -24,11 +27,11 @@ public class Page4Navigator<T> {
     boolean isHasPrevious;
     int[] navigatepageNums;
 
-     public Page4Navigator(Page<T> pageFromJPA, int navigatePages) {
+    public Page4Navigator(Page<T> pageFromJPA, int navigatePages) {
         this.pageFromJPA = pageFromJPA;
         this.navigatePages = navigatePages;
         totalPages = pageFromJPA.getTotalPages();
-        number  = pageFromJPA.getNumber() ;
+        number = pageFromJPA.getNumber();
         totalElements = pageFromJPA.getTotalElements();
         size = pageFromJPA.getSize();
         numberOfElements = pageFromJPA.getNumberOfElements();
@@ -37,10 +40,10 @@ public class Page4Navigator<T> {
         first = pageFromJPA.isFirst();
         last = pageFromJPA.isLast();
         isHasNext = pageFromJPA.hasNext();
-        isHasPrevious  = pageFromJPA.hasPrevious();
+        isHasPrevious = pageFromJPA.hasPrevious();
         calcNavigatepageNums();
     }
- 
+
     private void calcNavigatepageNums() {
         int[] navigatepageNums;
         int totalPages = getTotalPages();
@@ -55,7 +58,7 @@ public class Page4Navigator<T> {
             navigatepageNums = new int[navigatePages];
             int startNum = num - navigatePages / 2;
             int endNum = num + navigatePages / 2;
- 
+
             if (startNum < 1) {
                 startNum = 1;
                 //(最前navigatePages页
@@ -74,7 +77,7 @@ public class Page4Navigator<T> {
                     navigatepageNums[i] = startNum++;
                 }
             }
-        }  
+        }
         this.navigatepageNums = navigatepageNums;
     }
 }

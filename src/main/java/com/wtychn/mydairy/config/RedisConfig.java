@@ -1,66 +1,63 @@
 package com.wtychn.mydairy.config;
 
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.alibaba.fastjson.parser.ParserConfig;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.time.Duration;
 
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
-//    @Value("${spring.cache.redis.time-to-live}")
-//    private final Duration timeToLive = Duration.ZERO;
+    @Bean
+    @Primary//当有多个管理器的时候，必须使用该注解在一个管理器上注释：表示该管理器为默认的管理器
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        //初始化一个RedisCacheWriter
+        RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory);
+        //  JSONObject
+        FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
+        RedisSerializationContext.SerializationPair<Object> pair = RedisSerializationContext.SerializationPair.fromSerializer(fastJsonRedisSerializer);
+        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig().serializeValuesWith(pair);
+        //设置过期时间 30天
+        defaultCacheConfig = defaultCacheConfig.entryTtl(Duration.ofDays(1));
+        //初始化RedisCacheManager
+        RedisCacheManager cacheManager = new RedisCacheManager(redisCacheWriter, defaultCacheConfig);
+        //设置白名单---非常重要********
+        /*
+        使用fastjson的时候：序列化时将class信息写入，反解析的时候，
+        fastjson默认情况下会开启autoType的检查，相当于一个白名单检查，
+        如果序列化信息中的类路径不在autoType中，
+        反解析就会报com.alibaba.fastjson.JSONException: autoType is not support的异常
+        可参考 https://blog.csdn.net/u012240455/article/details/80538540
+         */
+        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+        ParserConfig.getGlobalInstance().addAccept("com.wtychn.mydairy.");
+        ParserConfig.getGlobalInstance().addAccept("org.springframework.");
+        return cacheManager;
+    }
 
 
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
-        RedisSerializer<Object> serializer = new FastJsonRedisSerializer<>(Object.class);
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-        // 用FastJsonRedisSerializer来序列化和反序列化redis的value值
-        redisTemplate.setValueSerializer(serializer);
-
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        // 使用StringRedisSerializer来序列化和反序列化redis的key值
-        redisTemplate.setKeySerializer(stringRedisSerializer);
-
-        // hash的key也采用String的序列化方式
-        redisTemplate.setHashKeySerializer(stringRedisSerializer);
-        // hash的value序列化方式采用jackson
-        redisTemplate.setHashValueSerializer(serializer);
-        redisTemplate.afterPropertiesSet();
-        return redisTemplate;
-    }
-
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory factory) {
-        RedisSerializer<String> redisSerializer = new StringRedisSerializer();
-        RedisSerializer<Object> serializer = new FastJsonRedisSerializer<>(Object.class);
-        // 配置序列化（解决乱码的问题）
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                // 缓存有效期
-//                .entryTtl(timeToLive)
-                // 使用StringRedisSerializer来序列化和反序列化redis的key值
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
-                // 使用FastJsonRedisSerializer来序列化和反序列化redis的value值
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer))
-                // 禁用空值
-                .disableCachingNullValues();
-
-        return RedisCacheManager.builder(factory)
-                .cacheDefaults(config)
-                .build();
+        RedisTemplate<Object, Object> template = new RedisTemplate<>();
+        //使用fastjson序列化
+        FastJsonRedisSerializer fastJsonRedisSerializer = new FastJsonRedisSerializer(Object.class);
+        // value值的序列化采用fastJsonRedisSerializer
+        template.setValueSerializer(fastJsonRedisSerializer);
+        template.setHashValueSerializer(fastJsonRedisSerializer);
+        // key的序列化采用StringRedisSerializer
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setConnectionFactory(redisConnectionFactory);
+        return template;
     }
 }

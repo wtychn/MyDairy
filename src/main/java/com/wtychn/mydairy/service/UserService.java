@@ -16,13 +16,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-@CacheConfig(cacheNames="users")
 public class UserService implements UserDetailsService {
 
     @Autowired
     UserDAO userDAO;
 
-    @Cacheable(key="'users-page-'+#p0+ '-' + #p1")
     public Page4Navigator<User> list(int start, int size, int navigatePages) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Page<User> pageFromJPA = userDAO.findAll(PageRequest.of(start, size, sort));
@@ -43,17 +41,14 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    @Cacheable(key="'users-one-name-'+ #p0")
     public User getByName(String name) {
         return userDAO.findByName(name);
     }
 
-    @Cacheable(key="'users-one-name-'+ #p0 +'-password-'+ #p1")
     public User get(String name, String password) {
         return userDAO.getByNameAndPassword(name, password);
     }
 
-    @CacheEvict(allEntries=true)
     public void add(User user) {
         userDAO.save(user);
     }
