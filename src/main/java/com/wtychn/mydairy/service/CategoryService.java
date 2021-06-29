@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,7 +19,7 @@ public class CategoryService {
     CategoryDAO categoryDAO;
 
     public Page4Navigator<Category> list(int start, int size, int navigatePages) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Sort sort = Sort.by("id");
         Pageable pageable = PageRequest.of(start, size, sort);
         Page<Category> pageFromJPA = categoryDAO.findAll(pageable);
 
@@ -28,7 +27,7 @@ public class CategoryService {
     }
 
     public List<Category> list() {
-        return categoryDAO.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        return categoryDAO.findAll();
     }
 
     public void add(Category bean) {

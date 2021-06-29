@@ -12,7 +12,8 @@ spring:
       max-request-size: 100MB
 
   thymeleaf:
-    mode: LEGACYHTML5
+    mode: HTML
     servlet:
       content-type: text/html
     cache: false
+    encoding: utf-8

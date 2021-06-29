@@ -1,6 +1,7 @@
 package com.wtychn.mydairy.service;
 
 import com.wtychn.mydairy.dao.DairyDAO;
+import com.wtychn.mydairy.pojo.Category;
 import com.wtychn.mydairy.pojo.Dairy;
 import com.wtychn.mydairy.pojo.User;
 import com.wtychn.mydairy.util.Page4Navigator;
@@ -21,28 +22,14 @@ public class DairyService {
     @Autowired
     DairyDAO dairyDAO;
 
-
     public Page4Navigator<Dairy> list(int start, int size, int navigatePages, User user) {
-        List<Sort.Order> orders = new ArrayList<>();
-        orders.add(new Sort.Order(Sort.Direction.DESC, "time"));
-        orders.add(new Sort.Order(Sort.Direction.ASC, "tid"));
-        Sort sort = Sort.by(orders);
-        Page<Dairy> pageFromJPA = dairyDAO.findByUser(user, PageRequest.of(start, size, sort));
+        Page<Dairy> pageFromJPA = dairyDAO.findByUserOrderByTimeDesc(user, PageRequest.of(start, size));
         return new Page4Navigator<>(pageFromJPA, navigatePages);
     }
 
-    public List<Dairy> listByUser(User user) {
-        // 按日期倒序及当日时间正序排列
-        List<Sort.Order> orders = new ArrayList<>();
-        orders.add(new Sort.Order(Sort.Direction.DESC, "time"));
-        orders.add(new Sort.Order(Sort.Direction.ASC, "tid"));
-        return dairyDAO.findByUser(user, Sort.by(orders));
-    }
-
-    public List<Dairy> listByTime(Date time, User user) {
-        return listByUser(user).stream()
-                .filter(dairy -> dairy.getTime().equals(time))
-                .collect(Collectors.toList());
+    public Page4Navigator<Dairy> listByCategory(int start, int size, int navigatePages, Category category, User user) {
+        Page<Dairy> pageFromJPA = dairyDAO.findByUserAndCategoryOrderByTimeDesc(user, category, PageRequest.of(start, size));
+        return new Page4Navigator<>(pageFromJPA, navigatePages);
     }
 
     public Dairy get(int id) {

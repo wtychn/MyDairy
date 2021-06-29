@@ -1,11 +1,12 @@
 package com.wtychn.mydairy.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @Entity
@@ -18,7 +19,9 @@ public class Dairy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private Date time;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private String time;
 
     private int time_consuming;
 
