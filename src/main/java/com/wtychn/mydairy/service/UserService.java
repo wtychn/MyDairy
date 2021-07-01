@@ -4,6 +4,7 @@ import com.wtychn.mydairy.dao.UserDAO;
 import com.wtychn.mydairy.pojo.User;
 import com.wtychn.mydairy.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -53,4 +54,7 @@ public class UserService implements UserDetailsService {
         userDAO.save(user);
     }
 
+    public void update(User user) {
+        userDAO.save(user);
+    }
 }

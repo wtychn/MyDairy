@@ -22,6 +22,16 @@ public class AdminPageController {
 		return "admin/editCategory";
 	}
 
+	@GetMapping(value="/admin_role_list")
+	public String listRole(){
+		return "admin/listRole";
+	}
+
+	@GetMapping(value="/admin_role_edit")
+	public String editRole(){
+		return "admin/editRole";
+	}
+
 	@GetMapping(value="/admin_user_list")
 	public String listUser(){
 		return "admin/listUser";
