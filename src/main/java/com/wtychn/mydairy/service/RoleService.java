@@ -1,7 +1,6 @@
 package com.wtychn.mydairy.service;
 
 import com.wtychn.mydairy.dao.RoleDAO;
-import com.wtychn.mydairy.dao.User_RoleDAO;
 import com.wtychn.mydairy.pojo.Role;
 import com.wtychn.mydairy.util.Page4Navigator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,6 @@ public class RoleService {
 
     @Autowired
     RoleDAO roleDAO;
-    @Autowired
-    User_RoleDAO user_roleDAO;
 
     public Page4Navigator<Role> list(int start, int size, int navigatePages) {
         Sort sort = Sort.by("id");
@@ -42,7 +39,6 @@ public class RoleService {
     @CacheEvict(allEntries = true)
     public void delete(int id) {
         roleDAO.deleteById(id);
-        user_roleDAO.deleteByRole_id(id);
     }
 
     @CacheEvict(allEntries = true)
