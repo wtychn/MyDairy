@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @ApiModel(value = "日记")
 @Table(name = "dairy")
 @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
+@Document(indexName = "my_dairy", type = "dairy")
 public class Dairy {
 
     @Id

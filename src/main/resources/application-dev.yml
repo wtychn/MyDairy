@@ -65,11 +65,5 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
-  data:
-    elasticsearch:
-      client:
-        reactive:
-          endpoints: 127.0.0.1:9300
-
 swagger:
   enabled: true
