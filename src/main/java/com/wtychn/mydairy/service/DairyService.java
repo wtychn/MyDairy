@@ -1,7 +1,7 @@
 package com.wtychn.mydairy.service;
 
 import com.wtychn.mydairy.dao.DairyDAO;
-import com.wtychn.mydairy.es.DairyESDAO;
+import com.wtychn.mydairy.es.dao.DairyESDAO;
 import com.wtychn.mydairy.pojo.Category;
 import com.wtychn.mydairy.pojo.Dairy;
 import com.wtychn.mydairy.pojo.User;
@@ -65,8 +65,7 @@ public class DairyService {
                         ScoreFunctionBuilders.weightFactorFunction(100))
                 .scoreMode(FunctionScoreQuery.ScoreMode.SUM)
                 .setMinScore(10);
-        Sort sort = Sort.by(Sort.Direction.DESC, "time");
-        Pageable pageable = PageRequest.of(start, size, sort);
+        Pageable pageable = PageRequest.of(start, size);
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withPageable(pageable)
                 .withQuery(functionScoreQueryBuilder).build();

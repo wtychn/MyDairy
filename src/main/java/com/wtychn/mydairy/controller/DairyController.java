@@ -67,4 +67,12 @@ public class DairyController {
 
         return bean;
     }
+
+    @GetMapping("/dairysearch")
+    @ApiOperation(value = "日记搜索")
+    public Object search(@RequestParam(required = false) String keyword) {
+        if (null == keyword)
+            keyword = "";
+        return dairyService.search(keyword, 0, 20);
+    }
 }
